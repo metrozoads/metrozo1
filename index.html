@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Metrozo One</title>
+<meta name="theme-color" content="#1A2A55">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Metrozo One">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" href="icons/favicon.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<style>
+html,body{margin:0;height:100%;background:#0F1B3C;overflow:hidden;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif}
+#app{position:fixed;inset:0;width:100%;height:100%;border:0;background:#0F1B3C}
+#splash{position:fixed;inset:0;z-index:5;background:radial-gradient(700px 420px at 70% 20%,rgba(23,105,213,.25),transparent 60%),#0F1B3C;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:22px;transition:opacity .5s}
+#splash.off{opacity:0;pointer-events:none}
+#splash img{width:min(58vw,300px)}
+#splash i{width:34px;height:34px;border-radius:50%;border:4px solid rgba(255,255,255,.18);border-top-color:#ff7a2f;animation:sp 0.9s linear infinite}
+@keyframes sp{to{transform:rotate(360deg)}}
+#fb{position:fixed;left:16px;right:16px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:6;display:none;text-align:center;color:#c8d7ec;font-size:13px;line-height:1.5}
+#fb a{display:inline-block;margin-top:8px;padding:12px 22px;border-radius:12px;background:#ff7a2f;color:#1b1000;font-weight:800;text-decoration:none}
+</style>
+</head>
+<body>
+<div id="splash"><img src="icons/logo.png" alt="Metrozo Ads"><i></i></div>
+<iframe id="app" title="Metrozo One" allow="microphone; camera; clipboard-write; fullscreen; geolocation" referrerpolicy="no-referrer-when-downgrade"></iframe>
+<div id="fb">Taking long to open?<br><a id="fbA" href="#" target="_top">Open Metrozo One directly</a></div>
+<script>
+/* >>> The Apps Script web app link (Deploy > Manage deployments > Web app URL, ends with /exec) <<< */
+var APP_URL = "https://script.google.com/macros/s/AKfycbwOOh3zkcz1yaAMGVXgBCnuBkUkED6NTDxCktUntsmoy6EFdNdkckSeELrQLCgvNrPQBQ/exec";
+
+(function () {
+  var f = document.getElementById("app"), sp = document.getElementById("splash"), fb = document.getElementById("fb"), a = document.getElementById("fbA");
+  a.href = APP_URL;
+  f.addEventListener("load", function () { setTimeout(function () { sp.classList.add("off"); fb.style.display = "none"; }, 400); });
+  f.src = APP_URL;
+  setTimeout(function () { if (!sp.classList.contains("off")) fb.style.display = "block"; }, 12000);
+  if ("serviceWorker" in navigator) window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () { }); });
+  /* keep the splash from hiding the page if the iframe load event is blocked */
+  setTimeout(function () { sp.classList.add("off"); }, 20000);
+})();
+</script>
+</body>
+</html>
