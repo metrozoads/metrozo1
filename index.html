@@ -1,9 +1,11 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" translate="no">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Metrozo One</title>
+<meta name="google" content="notranslate">
+<meta http-equiv="Content-Language" content="en">
 <meta name="theme-color" content="#0F1B3C">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-capable" content="yes">
@@ -58,6 +60,31 @@ html,body{margin:0;height:100%;background:#0F1B3C;overflow:hidden;font-family:sy
   f.addEventListener("load", function () { setTimeout(show, 250); });
   setTimeout(function () { if (!done) fb.style.display = "block"; }, 12000);
   setTimeout(show, 20000);
+
+  /* ---- voice bridge: the dashboard lives in nested frames that cannot ask for the microphone; this top page does it and sends the text back ---- */
+  var SR = window.SpeechRecognition || window.webkitSpeechRecognition, rec = null;
+  function sendAll(w, m, depth) {
+    try { w.postMessage(m, "*"); } catch (e) { }
+    if (depth >= 3) return;
+    var n = 0; try { n = w.length; } catch (e) { }
+    for (var i = 0; i < n; i++) { var c; try { c = w[i]; } catch (e) { continue; } if (c) sendAll(c, m, depth + 1); }
+  }
+  function tell(ev, extra) { var m = { mz: "stt-r", ev: ev }; for (var k in (extra || {})) m[k] = extra[k]; sendAll(f.contentWindow, m, 0); }
+  window.addEventListener("message", function (e) {
+    var d = e.data; if (!d || d.mz !== "stt" || e.source === window) return;
+    if (d.op === "ping") { tell("pong"); return; }
+    if (d.op === "stop") { try { rec && rec.stop(); } catch (x) { } return; }
+    if (d.op === "start") {
+      if (!SR) { tell("error", { err: "service-not-allowed" }); return; }
+      try { rec && rec.abort(); } catch (x) { }
+      rec = new SR(); rec.lang = d.lang || "en-IN"; rec.interimResults = true; rec.continuous = false;
+      rec.onstart = function () { tell("start"); };
+      rec.onresult = function (ev) { var t = ""; for (var i = 0; i < ev.results.length; i++) t += ev.results[i][0].transcript; tell("result", { text: t }); };
+      rec.onerror = function (ev) { tell("error", { err: ev.error }); };
+      rec.onend = function () { tell("end"); };
+      try { rec.start(); } catch (x) { tell("error", { err: "not-allowed" }); }
+    }
+  });
   if ("serviceWorker" in navigator) window.addEventListener("load", function () { navigator.serviceWorker.register("sw.js").catch(function () { }); });
 })();
 </script>
