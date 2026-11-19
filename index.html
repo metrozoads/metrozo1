@@ -37,6 +37,16 @@ html,body{margin:0;height:100%;background:#0F1B3C;overflow:hidden;font-family:sy
 #splash .go{height:52px;border-radius:14px;background:#E8660A;margin-top:6px;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;letter-spacing:.08em;font-size:14px}
 #splash .ft{text-align:center;color:#6d7fa3;font-size:11.5px;margin-top:14px}
 @keyframes sh{to{transform:translateX(100%)}}
+#splash .spin{display:none;width:34px;height:34px;border-radius:50%;border:4px solid rgba(255,255,255,.18);border-top-color:#ff7a2f;animation:rot .9s linear infinite;margin-top:22px}
+@keyframes rot{to{transform:rotate(360deg)}}
+/* desktop / laptop: no phone-style card, only the logo and a spinner */
+@media (min-width:901px){
+  #splash{justify-content:center}
+  #splash .br{padding:0}
+  #splash .br h1,#splash .br p,#splash .cd{display:none}
+  #splash .br img{width:220px}
+  #splash .spin{display:block;margin-left:auto;margin-right:auto}
+}
 #fb{position:fixed;left:16px;right:16px;bottom:calc(20px + env(safe-area-inset-bottom,0px));z-index:6;display:none;text-align:center;color:#c8d7ec;font-size:13px;line-height:1.5}
 #fb a{display:inline-block;margin-top:8px;padding:12px 22px;border-radius:12px;background:#ff7a2f;color:#1b1000;font-weight:800;text-decoration:none}
 </style>
@@ -46,6 +56,7 @@ html,body{margin:0;height:100%;background:#0F1B3C;overflow:hidden;font-family:sy
 <iframe id="app" title="Metrozo One" src="https://script.google.com/macros/s/AKfycbwOOh3zkcz1yaAMGVXgBCnuBkUkED6NTDxCktUntsmoy6EFdNdkckSeELrQLCgvNrPQBQ/exec" allow="microphone *; camera *; clipboard-read *; clipboard-write *; fullscreen *; geolocation *; autoplay *; encrypted-media *; picture-in-picture *; screen-wake-lock *" referrerpolicy="no-referrer-when-downgrade"></iframe>
 <div id="splash">
   <div class="br"><img src="logo.png" alt="Metrozo Ads"><h1>Metrozo <b>One</b></h1><p>Enterprise Management System</p></div>
+  <div class="spin"></div>
   <div class="cd"><h2>Welcome back</h2><div class="s">Sign in and make today count.</div>
     <div class="lb"></div><div class="sk"></div><div class="lb"></div><div class="sk"></div>
     <div class="go">LOADING...</div><div class="ft">Secure sign-in · Metrozo Ads Internal Operations System</div></div>
